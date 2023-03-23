@@ -34,10 +34,16 @@ def orderSubTotals():
         group by OrderID
         order by OrderID;
         """
-    orders_by_month = Orderdetails.objects.values('orderid').annotate(
-        total_price=Sum('singleTotal')
-    ).order_by('month')
-    print(orders_by_month)
+    subtotal_by_order = (
+        Orderdetails.objects
+        .values('OrderID')
+        .annotate(
+            Subtotal=Sum(F('UnitPrice') * F('Quantity') * (1 - F('Discount')), output_field=models.FloatField())
+        )
+        .order_by('OrderID')
+    )
+    print(subtotal_by_order.query)
+    print(subtotal_by_order)
     return
 
 
@@ -47,16 +53,16 @@ def salesByYear():
                 a.OrderID,
                 b.Subtotal,
                 year(a.ShippedDate) as Year
-from Orders a
-         inner join
-     (
-         select distinct OrderID,
-                         format(sum(UnitPrice * Quantity * (1 - Discount)), 2) as Subtotal
-         from orderdetails
-         group by OrderID) b on a.OrderID = b.OrderID
-where a.ShippedDate is not null
-  and a.ShippedDate between date('1996-12-24') and date('1997-09-30')
-order by a.ShippedDate;
+    from Orders a
+             inner join
+         (
+             select distinct OrderID,
+                             format(sum(UnitPrice * Quantity * (1 - Discount)), 2) as Subtotal
+             from orderdetails
+             group by OrderID) b on a.OrderID = b.OrderID
+    where a.ShippedDate is not null
+      and a.ShippedDate between date('1996-12-24') and date('1997-09-30')
+    order by a.ShippedDate;
     :return:
     """
     orders = (
@@ -134,24 +140,25 @@ def listOfProducts():
             products__Discontinued='N'
         )
         .annotate(
-            Category_Name=F('Category_Name')
+            CategoryName=F('CategoryName')
         )
         .values(
-            'products__Product_ID',
-            'products__Product_Name',
-            'products__Supplier_ID',
-            'products__Category_ID',
-            'products__Quantity_Per_Unit',
-            'products__Unit_Price',
-            'products__Units_In_Stock',
-            'products__Units_On_Order',
-            'products__Reorder_Level',
+            'products__ProductID',
+            'products__ProductName',
+            'products__SupplierID',
+            'products__CategoryID',
+            'products__QuantityPerUnit',
+            'products__UnitPrice',
+            'products__UnitsInStock',
+            'products__UnitsOnOrder',
+            'products__ReorderLevel',
             'products__Discontinued',
-            'Category_Name'
+            'CategoryName'
         )
-        .order_by('products__Product_Name')
-        .distinct('products__Product_ID')
+        .order_by('products__ProductName')
+        .distinct('products__ProductID')
     )
+
     print(categories.query)
     print(categories)
 

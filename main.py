@@ -121,6 +121,14 @@ def employeeSalesByCountry():
 
 
 def listOfProducts():
+    """
+    select distinct b.*, a.CategoryName
+    from Categories a
+    inner join Products b on a.CategoryID = b.CategoryID
+    where b.Discontinued = 'N'
+    order by b.ProductName;
+    :return:
+    """
     categories = (
         Categories.objects.filter(
             products__Discontinued='N'
@@ -149,6 +157,13 @@ def listOfProducts():
 
 
 def currentProductList():
+    """
+    select ProductID, ProductName
+    from products
+    where Discontinued = 'N'
+    order by ProductName;
+    :return:
+    """
     products = (
         Products.objects.filter(
             Discontinued='N'
@@ -161,3 +176,7 @@ def currentProductList():
     )
     print(products.query)
     print(products)
+
+
+if __name__ == '__main__':
+    currentProductList()

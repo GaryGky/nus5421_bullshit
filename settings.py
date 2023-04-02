@@ -3,11 +3,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# SECURITY WARNING: Modify this secret key if using in production!
-SECRET_KEY = "6few3nci_q_o@l1dlbk81%wcxe!*6r29yu629&d97!hiqat9fa"
-
 # DEFAULT_AUTO_FIELD='django.db.models.AutoField'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -23,7 +19,7 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-INSTALLED_APPS = ["db", "debug_toolbar", "django.contrib.staticfiles"]
+INSTALLED_APPS = ["db", "debug_toolbar"]
 
 TEMPLATES = [
     {
@@ -31,3 +27,8 @@ TEMPLATES = [
         "APP_DIRS": True,
     }
 ]
+
+DEBUG_TOOLBAR_CONFIG = {
+    # Django's test client sets wsgi.multiprocess to True inappropriately
+    "RENDER_PANELS": False
+}
